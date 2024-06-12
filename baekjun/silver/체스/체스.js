@@ -13,14 +13,17 @@ const fs = require("fs");
 let input = fs.readFileSync("/dev/stdin").toString().trim().split("\n");
 
 const [N, M] = input.shift().split(" ").map(Number);
+
 const queen = input.shift().split(" ").map(Number);
-const qLength = queen.shift();
+const queenLength = queen.shift();
+const queenArr = [];
 
 const knight = input.shift().split(" ").map(Number);
-const kLength = knight.shift();
+const knightLength = knight.shift();
+const knightArr = [];
 
-const pwan = input.shift().split(" ").map(Number);
-const pLength = pwan.shift();
+const pawn = input.shift().split(" ").map(Number);
+const pawnLength = pawn.shift();
 
 const chess = Array.from({ length: N }, () =>
   Array.from({ length: M }, () => 0)
@@ -30,6 +33,7 @@ while (queen.length > 0) {
   const x = queen.shift();
   const y = queen.shift();
 
+  queenArr.push([x - 1, y - 1]);
   chess[x - 1][y - 1] = "Q";
 }
 
@@ -37,153 +41,211 @@ while (knight.length > 0) {
   const x = knight.shift();
   const y = knight.shift();
 
+  knightArr.push([x - 1, y - 1]);
   chess[x - 1][y - 1] = "K";
 }
 
-while (pwan.length > 0) {
-  const x = pwan.shift();
-  const y = pwan.shift();
+while (pawn.length > 0) {
+  const x = pawn.shift();
+  const y = pawn.shift();
 
   chess[x - 1][y - 1] = "P";
 }
 
-for (let i = 0; i < N; i++) {
-  for (let j = 0; j < M; j++) {
-    if (typeof chess[i][j] === "number" || chess[i][j] === "P") continue;
+while (queenArr.length > 0) {
+  const [x, y] = queenArr.shift();
 
-    if (chess[i][j] === "Q") {
-      queenTopMove(i, j);
-      queenBottomMove(i, j);
-      queenRightMove(i, j);
-      queenLeftMove(i, j);
-      queenTopRightMove(i, j);
-      queenTopLeftMove(i, j);
-      queenBottomRightMove(i, j);
-      queenBottomLeftMove(i, j);
-    }
+  top(x, y);
+  bottom(x, y);
 
-    if (chess[i][j] === "K") {
-      knightMove(i, j);
-    }
-  }
+  left(x, y);
+  right(x, y);
+
+  topRight(x, y);
+  bottomLeft(x, y);
+
+  topLeft(x, y);
+  bottomRight(x, y);
 }
 
-function queenTopMove(x, y) {
-  // top
+while (knightArr.length > 0) {
+  const [x, y] = knightArr.shift();
+
+  knightMove(x, y);
+}
+
+function top(x, y) {
+  x--;
+
   while (true) {
+    if (
+      x < 0 ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     x--;
-    if (x < 0 || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenBottomMove(x, y) {
-  // bottom
+function bottom(x, y) {
+  x++;
+
   while (true) {
+    if (
+      x >= N ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     x++;
-    if (x >= N || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenRightMove(x, y) {
-  // right
+function right(x, y) {
+  y++;
+
   while (true) {
+    if (
+      y >= M ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     y++;
-    if (y >= M || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenLeftMove(x, y) {
-  // left
+function left(x, y) {
+  y--;
+
   while (true) {
+    if (
+      y < 0 ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     y--;
-    if (y < 0 || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenTopRightMove(x, y) {
-  // topRight
+function topRight(x, y) {
+  x--;
+  y++;
+
   while (true) {
+    if (
+      x < 0 ||
+      y >= M ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     x--;
     y++;
-    if (x < 0 || y >= M || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenTopLeftMove(x, y) {
-  // topLeft
+function topLeft(x, y) {
+  x--;
+  y--;
+
   while (true) {
+    if (
+      x < 0 ||
+      y < 0 ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     x--;
     y--;
-    if (x < 0 || y < 0 || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenBottomRightMove(x, y) {
-  // bottomRight
+function bottomRight(x, y) {
+  x++;
+  y++;
+
   while (true) {
+    if (
+      x >= N ||
+      y >= M ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
+
+    chess[x][y] = 1;
     x++;
     y++;
-    if (x >= N || y >= N || chess[x][y] === "P") break;
-
-    chess[x][y] = 1;
   }
 }
 
-function queenBottomLeftMove(x, y) {
-  // bottomLeft
+function bottomLeft(x, y) {
+  x++;
+  y--;
+
   while (true) {
-    x++;
-    y--;
-    if (x >= N || y < 0 || chess[x][y] === "P") break;
+    if (
+      x >= N ||
+      y < 0 ||
+      chess[x][y] === "P" ||
+      chess[x][y] === "Q" ||
+      chess[x][y] === "K"
+    )
+      break;
 
     chess[x][y] = 1;
+    x++;
+    y--;
   }
 }
 
 function knightMove(x, y) {
-  if (x - 2 >= 0 && y - 1 >= 0 && chess[x - 2][y - 1] === 0) {
+  if (x - 2 >= 0 && y - 1 >= 0 && chess[x - 2][y - 1] === 0)
     chess[x - 2][y - 1] = 1;
-  }
 
-  if (x - 1 >= 0 && y - 2 >= 0 && chess[x - 1][y - 2] === 0) {
-    chess[x - 2][y - 1] = 1;
-  }
+  if (x - 1 >= 0 && y - 2 >= 0 && chess[x - 1][y - 2] === 0)
+    chess[x - 1][y - 2] = 1;
 
-  if (x - 2 >= 0 && y + 1 < M && chess[x - 2][y + 1] === 0) {
+  if (x - 2 >= 0 && y + 1 < M && chess[x - 2][y + 1] === 0)
     chess[x - 2][y + 1] = 1;
-  }
 
-  if (x - 1 >= 0 && y + 2 < M && chess[x - 1][y + 2] === 0) {
+  if (x - 1 >= 0 && y + 2 < M && chess[x - 1][y + 2] === 0)
     chess[x - 1][y + 2] = 1;
-  }
 
-  if (x + 1 < N && y - 2 >= 0 && chess[x + 1][y - 2] === 0) {
+  if (x + 1 < N && y - 2 >= 0 && chess[x + 1][y - 2] === 0)
     chess[x + 1][y - 2] = 1;
-  }
 
-  if (x + 2 < N && y - 1 >= 0 && chess[x + 2][y - 1] === 0) {
+  if (x + 2 < N && y - 1 >= 0 && chess[x + 2][y - 1] === 0)
     chess[x + 2][y - 1] = 1;
-  }
 
-  if (x + 1 < N && y + 2 < M && chess[x + 1][y + 2] === 0) {
+  if (x + 1 < N && y + 2 < M && chess[x + 1][y + 2] === 0)
     chess[x + 1][y + 2] = 1;
-  }
 
-  if (x + 2 < N && y + 1 < M && chess[x + 2][y + 1] === 0) {
+  if (x + 2 < N && y + 1 < M && chess[x + 2][y + 1] === 0)
     chess[x + 2][y + 1] = 1;
-  }
 }
 
-console.log(chess.flatMap((a) => a).filter((c) => c === 0).length);
+console.log(chess.flatMap((a) => a).filter((a) => a === 0).length);
